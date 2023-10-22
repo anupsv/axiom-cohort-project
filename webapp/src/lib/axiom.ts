@@ -28,24 +28,6 @@ export const buildAxiomQuery = async (
   const axiom = new Axiom(config);
   const query = (axiom.query as QueryV2).new();
 
-  // let receiptSubquery = buildReceiptSubquery(txHash)
-  //   .log(logIdx)
-  //   .topic(0) // topic 0: event schema
-  //   .eventSchema(Constants.EVENT_SCHEMA);
-  // query.appendDataSubquery(receiptSubquery);
-  //
-  // // Append a Receipt Subquery that checks the address recipient field
-  // receiptSubquery = buildReceiptSubquery(txHash)
-  //   .log(logIdx)
-  //   .topic(2) // topic 2: recipient
-  //   .eventSchema(Constants.EVENT_SCHEMA);
-  // query.appendDataSubquery(receiptSubquery);
-  //
-  // // Append a Receipt Subquery that gets the block number of the transaction receipt
-  // receiptSubquery = buildReceiptSubquery(txHash)
-  //   .blockNumber(); // block number of the transaction
-  // query.appendDataSubquery(receiptSubquery);
-
   // Append a Storage SubQuery with the adderss and the slot number provided.
   let storageSubQuery = buildStorageSubquery(blockNumber)
       .address(Constants.STAKE_REGISTRY)
@@ -55,7 +37,7 @@ export const buildAxiomQuery = async (
 
   const callback: AxiomV2Callback = {
     target: Constants.VALIDATION_CONTRACT,
-    extraData: bytes32(operatorId.toString() + quorum.toString() + arrayIndex.toString()), // need a way to pack and unpack this correctly.
+    extraData: bytes32(slot),
   }
   query.setCallback(callback);
 
