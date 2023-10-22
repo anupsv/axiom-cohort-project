@@ -73,7 +73,7 @@ contract SlashingConditionVerifier is AxiomV2Client {
         // unpack the data according to the OperatorStake struct format
         uint32 updateBlockNumber = uint32(uint256(slotData) >> (256 - 32));
         uint32 nextUpdateBlockNumber = uint32(uint256(slotData) >> (256 - 32 - 32));
-        uint96 stake = uint96(data);
+        uint96 stake = uint96(uint256(slotData));
 
         // Do stuff with the stake value
 
