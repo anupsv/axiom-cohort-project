@@ -10,10 +10,13 @@ import { formatEther, parseEther } from "viem";
 import Link from "next/link";
 
 export default function ValidationClient(
-  { abi, builtQuery, payment }: {
+  { abi, builtQuery, payment, operatorId, quorumNumber, slot }: {
     abi: any[],
     builtQuery: BuiltQueryV2,
     payment: string,
+    operatorId: string,
+    quorumNumber: number,
+    slot: string
   }
 ) {
   const { address } = useAccount();
@@ -37,19 +40,11 @@ export default function ValidationClient(
     address: Constants.VALIDATION_CONTRACT as `0x${string}`,
     abi: abi,
     functionName: 'processSlashing',
-    args: [claimParams],
+    args: [operatorId, quorumNumber, slot, claimParams],
     value: BigInt(payment),
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
-  // Check that the user has not claimed the airdrop yet
-  const { data: hasClaimed, isLoading: hasClaimedLoading } = useContractRead({
-    address: Constants.VALIDATION_CONTRACT as `0x${string}`,
-    abi: abi,
-    functionName: 'hasClaimed',
-    args: [address],
-  });
-  console.log("hasClaimed?", hasClaimed);
 
   useEffect(() => {
     if (isSuccess) {
@@ -95,10 +90,7 @@ export default function ValidationClient(
       return "Waiting for callback...";
     }
     if (isLoading) {
-      return "Confrm transaction in wallet...";
-    }
-    if (!!hasClaimed) {
-      return "Airdrop already claimed"
+      return "Confirm transaction in wallet...";
     }
     return "Claim 100 UT";
   }
@@ -121,7 +113,7 @@ export default function ValidationClient(
   return (
     <div className="flex flex-col items-center gap-2">
       <Button
-        disabled={isLoading || isSuccess || !!hasClaimed}
+        disabled={isLoading || isSuccess}
         onClick={() => write?.()}
       >
         {renderButtonText()}

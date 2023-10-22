@@ -2,15 +2,13 @@ import ValidationClient from "@/components/claim/ValidationClient";
 import Title from "@/components/ui/Title";
 import validationContractAbi from '@/lib/abi/AutonomousAirdrop.json';
 import { buildAxiomQuery } from "@/lib/axiom";
+import {bytes32} from "@axiom-crypto/experimental";
 
 export default async function Validate() {
 
   const { builtQuery, payment } = await buildAxiomQuery(
-      Number(9909556),
-    "0x86dfc0930cb222883cc0138873d68c1c9864fc2fe59d208c17f3484f489bef04",
-    Number(1),
-    Number(1),
-    Number(1)
+      Number(9897951),
+    "0xcbcc1482677ec2e1d747a7f7118c84e46887479eecf90bf7850b6ca501659ce6",
   );
   console.log("Axiom Query built! QueryHash:", builtQuery.queryHash);
 
@@ -27,6 +25,9 @@ export default async function Validate() {
           abi={validationContractAbi.abi}
           builtQuery={builtQuery}
           payment={payment}
+          operatorId="0xe605a4951e1bf738ac88fea0c37c9c5a5652d2def52177c2f01295ebacdcccc1"
+          quorumNumber={0}
+          slot="0xcbcc1482677ec2e1d747a7f7118c84e46887479eecf90bf7850b6ca501659ce6"
         />
       </div>
     </>

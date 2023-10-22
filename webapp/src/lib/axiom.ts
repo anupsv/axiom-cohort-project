@@ -11,11 +11,8 @@ import {
 export const buildAxiomQuery = async (
     blockNumber: number,
     slot: string,
-    operatorId: number,
-    quorum: number,
-    arrayIndex: number
 ) => {
-  if (!blockNumber || !slot || !operatorId || !quorum || !arrayIndex) {
+  if (!blockNumber || !slot) {
     throw new Error("Invalid data provided for axiom query building.");
   }
 

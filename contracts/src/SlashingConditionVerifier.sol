@@ -30,14 +30,19 @@ contract SlashingConditionVerifier is AxiomV2Client {
 
     // probably admin function or something.
     function processSlashing(
-    uint256 operatorId, uint256 quorum, uint256 arrayIndex, uint256 operatorIdToStakeHistorySlot,
+        bytes32 operatorId,
+        uint256 quorumNumber,
+        uint256 operatorIdToStakeHistorySlot,
         IAxiomV2Input.AxiomV2QueryData calldata axiomData
     ) external payable {
-        _validateDataQuery(axiomData.dataQuery);
 
-        bytes32 rawStorageSlot = keccak256(keccak256(abi.encodedPacked(uint256(quorumNumber), keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot))))) + arrayIdx;
+        // ArrayIndex no longer needed per comment on script. We currently only need to read 0th index.
+        bytes32 operatorIdSlot = keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot));
+        bytes32 quorumNumSlot = keccak256(abi.encodePacked(quorumNumber, operatorIdSlot));
+        bytes32 rawStorageSlot = keccak256(abi.encodePacked(quorumNumSlot));
         require(rawStorageSlot == bytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
 
+//        _validateDataQuery(axiomData.dataQuery);
         uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
             axiomData.sourceChainId,
             axiomData.dataQueryHash,
@@ -65,19 +70,16 @@ contract SlashingConditionVerifier is AxiomV2Client {
         // Parse results
         bytes32 slotData = axiomResults[0];
 
-        // calculate the
+        // unpack the data according to the OperatorStake struct format
+        uint32 updateBlockNumber = uint32(uint256(slotData) >> (256 - 32));
+        uint32 nextUpdateBlockNumber = uint32(uint256(slotData) >> (256 - 32 - 32));
+        uint96 stake = uint96(data);
 
-        // todo: verify the slot data received against the extraData received which is the decomposed ref vals.
+        // Do stuff with the stake value
 
-
-        
-        // Handle results
-        
     }
 
-    function _validateDataQuery(bytes calldata dataQuery, uint256 quorum, uint256 operatorId, uint256 operatorIdToStakeHistorySlot) internal view {
-
-
+    function _validateDataQuery(bytes calldata dataQuery) internal view {
         // Decode the storage subQuery from the DataQuery
         (AxiomV2Decoder.DataQueryHeader memory header, bytes calldata dq0) = AxiomV2Decoder.decodeDataQueryHeader(dataQuery);
         (AxiomV2Decoder.StorageSubquery memory storageSq0, ) = AxiomV2Decoder.decodeStorageSubquery(dq0);

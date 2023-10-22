@@ -21,8 +21,8 @@ const SourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: 'Autonomous Airdrop Example',
-  description: 'Users can autonomously claim an airdrop by generating a Zero Knowledge proof of their Ethereum history.',
+  title: 'EL slashing check',
+  description: 'We gotta slash bad behaviours.... come now...',
 }
 
 export default function RootLayout({
