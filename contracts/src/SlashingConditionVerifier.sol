@@ -30,9 +30,14 @@ contract SlashingConditionVerifier is AxiomV2Client {
 
     // probably admin function or something.
     function processSlashing(
+    uint256 operatorId, uint256 quorum, uint256 arrayIndex, uint256 operatorIdToStakeHistorySlot,
         IAxiomV2Input.AxiomV2QueryData calldata axiomData
     ) external payable {
         _validateDataQuery(axiomData.dataQuery);
+
+        bytes32 rawStorageSlot = keccak256(keccak256(abi.encodedPacked(uint256(quorumNumber), keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot))))) + arrayIdx;
+        require(rawStorageSlot == bytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
+
         uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
             axiomData.sourceChainId,
             axiomData.dataQueryHash,
@@ -55,16 +60,24 @@ contract SlashingConditionVerifier is AxiomV2Client {
         bytes calldata extraData
     ) internal virtual override {
 
+        bytes32 rawStorageSlot = abi.decode(extraData, (bytes32));
+
         // Parse results
         bytes32 slotData = axiomResults[0];
 
+        // calculate the
+
         // todo: verify the slot data received against the extraData received which is the decomposed ref vals.
+
+
         
         // Handle results
         
     }
 
-    function _validateDataQuery(bytes calldata dataQuery) internal view {
+    function _validateDataQuery(bytes calldata dataQuery, uint256 quorum, uint256 operatorId, uint256 operatorIdToStakeHistorySlot) internal view {
+
+
         // Decode the storage subQuery from the DataQuery
         (AxiomV2Decoder.DataQueryHeader memory header, bytes calldata dq0) = AxiomV2Decoder.decodeDataQueryHeader(dataQuery);
         (AxiomV2Decoder.StorageSubquery memory storageSq0, ) = AxiomV2Decoder.decodeStorageSubquery(dq0);
