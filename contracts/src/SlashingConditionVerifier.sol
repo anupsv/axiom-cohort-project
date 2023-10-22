@@ -28,6 +28,13 @@ contract SlashingConditionVerifier is AxiomV2Client {
         axiomCallbackQuerySchema = _axiomCallbackQuerySchema;
     }
 
+    function convertBytesToBytes32(bytes memory input) public pure returns (bytes32 result) {
+        require(input.length == 32, "Input must be 32 bytes");
+        assembly {
+            result := mload(add(input, 32))
+        }
+    }
+
     // probably admin function or something.
     function processSlashing(
         bytes32 operatorId,
@@ -40,7 +47,7 @@ contract SlashingConditionVerifier is AxiomV2Client {
         bytes32 operatorIdSlot = keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot));
         bytes32 quorumNumSlot = keccak256(abi.encodePacked(quorumNumber, operatorIdSlot));
         bytes32 rawStorageSlot = keccak256(abi.encodePacked(quorumNumSlot));
-        require(rawStorageSlot == bytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
+        require(rawStorageSlot == convertBytesToBytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
 
 //        _validateDataQuery(axiomData.dataQuery);
         uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
