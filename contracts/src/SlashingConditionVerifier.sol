@@ -74,19 +74,6 @@ contract SlashingConditionVerifier is AxiomV2Client {
 
         // Check that the types for all of the incoming Subqueries are correct
         require(storageSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Storage), "storageSq0.subqueryType must be 4");
-
-
-        // Check block number and tx indexes for all Receipt and Tx Subqueries match
-        require(keccak256(abi.encode(receiptSq0.blockNumber)) == keccak256(abi.encode(receiptSq1.blockNumber)), "blockNumber[0,1] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq1.blockNumber)) == keccak256(abi.encode(receiptSq2.blockNumber)), "blockNumber[1,2] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq2.blockNumber)) == keccak256(abi.encode(txSq0.blockNumber)), "blockNumber[3,4] for dataQuery do not match");
-        require(keccak256(abi.encode(txSq0.blockNumber)) == keccak256(abi.encode(storageSq0.blockNumber)), "blockNumber[4,5] for dataQuery do not match");
-
-        require(keccak256(abi.encode(receiptSq0.txIdx)) == keccak256(abi.encode(receiptSq1.txIdx)), "txIdx[0,1] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq1.txIdx)) == keccak256(abi.encode(receiptSq2.txIdx)), "txIdx[1,2] for dataQuery do not match");
-        require(keccak256(abi.encode(receiptSq2.txIdx)) == keccak256(abi.encode(txSq0.txIdx)), "txIdx[3,4] for dataQuery do not match");
-        require(keccak256(abi.encode(txSq0.txIdx)) == keccak256(abi.encode(storageSq0.txIdx)), "txIdx[4,5] for dataQuery do not match");
-
     }
 
     function _validateAxiomV2Call(
