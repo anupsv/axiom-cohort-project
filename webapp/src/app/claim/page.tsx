@@ -1,6 +1,6 @@
 import ValidationClient from "@/components/claim/ValidationClient";
 import Title from "@/components/ui/Title";
-import validationContractAbi from '@/lib/abi/AutonomousAirdrop.json';
+import validationContractAbi from '@/lib/abi/SlashingConditionVerifier.json';
 import { buildAxiomQuery } from "@/lib/axiom";
 import {bytes32} from "@axiom-crypto/experimental";
 
