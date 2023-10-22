@@ -1,0 +1,3 @@
+forge script script/SlashingConditionVerifierScript.s.sol:SlashingConditionVerifierScript --private-key xxx --broadcast --rpc-url xxx -vvvv --verify --etherscan-api-key xxx
+cp out/SlashingConditionVerifier.sol/SlashingConditionVerifier.json ../scripts/src/abi/SlashingConditionVerifier.json
+cp out/SlashingConditionVerifier.sol/SlashingConditionVerifier.json ../webapp/src/lib/abi/SlashingConditionVerifier.json
