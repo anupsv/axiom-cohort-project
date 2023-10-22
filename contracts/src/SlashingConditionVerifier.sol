@@ -65,23 +65,15 @@ contract SlashingConditionVerifier is AxiomV2Client {
     }
 
     function _validateDataQuery(bytes calldata dataQuery) internal view {
-        // Decode all of the Subqueries from the DataQuery
+        // Decode the storage subQuery from the DataQuery
         (AxiomV2Decoder.DataQueryHeader memory header, bytes calldata dq0) = AxiomV2Decoder.decodeDataQueryHeader(dataQuery);
-        (AxiomV2Decoder.ReceiptSubquery memory receiptSq0, bytes calldata dq1) = AxiomV2Decoder.decodeReceiptSubquery(dq0);
-        (AxiomV2Decoder.ReceiptSubquery memory receiptSq1, bytes calldata dq2) = AxiomV2Decoder.decodeReceiptSubquery(dq1);
-        (AxiomV2Decoder.ReceiptSubquery memory receiptSq2, bytes calldata dq3) = AxiomV2Decoder.decodeReceiptSubquery(dq2);
-        (AxiomV2Decoder.TxSubquery memory txSq0, bytes calldata dq4) = AxiomV2Decoder.decodeTxSubquery(dq3);
-        (AxiomV2Decoder.StorageSubquery memory storageSq0, ) = AxiomV2Decoder.decodeStorageSubquery(query);(dq4);
+        (AxiomV2Decoder.StorageSubquery memory storageSq0, ) = AxiomV2Decoder.decodeStorageSubquery(dq0);
 
         // Validate that this query is only for the chain that this contract is deployed on
         require(header.sourceChainId == block.chainid, "DataQuery sourceChainId be the same as the deployed contract's chainId");
 
         // Check that the types for all of the incoming Subqueries are correct
-        require(receiptSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
-        require(receiptSq1.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
-        require(receiptSq2.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Receipt), "receiptSq0.subqueryType must be 5");
-        require(txSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Tx), "txSq0.subqueryType must be 4");
-        require(storageSq0.subqueryType == uint16(AxiomV2Decoder.StorageSubquery.Tx), "storageSq0.subqueryType must be 4");
+        require(storageSq0.subqueryType == uint16(AxiomV2Decoder.SubqueryType.Storage), "storageSq0.subqueryType must be 4");
 
 
         // Check block number and tx indexes for all Receipt and Tx Subqueries match
@@ -89,6 +81,7 @@ contract SlashingConditionVerifier is AxiomV2Client {
         require(keccak256(abi.encode(receiptSq1.blockNumber)) == keccak256(abi.encode(receiptSq2.blockNumber)), "blockNumber[1,2] for dataQuery do not match");
         require(keccak256(abi.encode(receiptSq2.blockNumber)) == keccak256(abi.encode(txSq0.blockNumber)), "blockNumber[3,4] for dataQuery do not match");
         require(keccak256(abi.encode(txSq0.blockNumber)) == keccak256(abi.encode(storageSq0.blockNumber)), "blockNumber[4,5] for dataQuery do not match");
+
         require(keccak256(abi.encode(receiptSq0.txIdx)) == keccak256(abi.encode(receiptSq1.txIdx)), "txIdx[0,1] for dataQuery do not match");
         require(keccak256(abi.encode(receiptSq1.txIdx)) == keccak256(abi.encode(receiptSq2.txIdx)), "txIdx[1,2] for dataQuery do not match");
         require(keccak256(abi.encode(receiptSq2.txIdx)) == keccak256(abi.encode(txSq0.txIdx)), "txIdx[3,4] for dataQuery do not match");
