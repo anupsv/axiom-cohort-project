@@ -13,3 +13,6 @@ read-stake-of-operator-quorum: ## retrieve stake of OPERATOR_ID/QUORUM_NUM from 
 
 start-anvil-fork-goerli: ## starts an anvil chain that forks off of goerli
 	anvil --fork-url https://ethereum-goerli.publicnode.com
+
+test-callback: ## tests the callback in CecVerifier.sol
+	cd contracts && forge test
