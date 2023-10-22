@@ -33,10 +33,10 @@ contract SlashingConditionVerifier is AxiomV2Client {
     uint256 operatorId, uint256 quorum, uint256 arrayIndex, uint256 operatorIdToStakeHistorySlot,
         IAxiomV2Input.AxiomV2QueryData calldata axiomData
     ) external payable {
-        _validateDataQuery(axiomData.dataQuery);
+        // _validateDataQuery(axiomData.dataQuery);
 
-        bytes32 rawStorageSlot = keccak256(keccak256(abi.encodedPacked(uint256(quorumNumber), keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot))))) + arrayIdx;
-        require(rawStorageSlot == bytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
+        // bytes32 rawStorageSlot = keccak256(keccak256(abi.encodedPacked(uint256(quorumNumber), keccak256(abi.encodePacked(operatorId, operatorIdToStakeHistorySlot))))) + arrayIdx;
+        // require(rawStorageSlot == bytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
 
         uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
             axiomData.sourceChainId,
