@@ -77,7 +77,7 @@ export default function ValidationClient(
   useContractEvent({
     address: Constants.VALIDATION_CONTRACT as `0x${string}`,
     abi: abi,
-    eventName: 'ClaimAirdropError',
+    eventName: 'Error',
     listener(log) {
       console.log("Claim airdrop error");
       console.log(log);
@@ -92,11 +92,11 @@ export default function ValidationClient(
     if (isLoading) {
       return "Confirm transaction in wallet...";
     }
-    return "Claim 100 UT";
+    return "Let's do this";
   }
 
   const renderClaimProofText = () => {
-    return `Generating the proof for the claim costs ${formatEther(BigInt(payment)).toString()}ETH`;
+    return `Generating the proof for the costs ${formatEther(BigInt(payment)).toString()}ETH`;
   }
 
   const renderExplorerLink = () => {
