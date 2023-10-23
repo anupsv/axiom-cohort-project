@@ -1,7 +1,7 @@
 "use client";
 
 import { Constants } from "@/shared/constants";
-import { BuiltQueryV2 } from "@axiom-crypto/experimental";
+import {BuiltQueryV2, bytes32} from "@axiom-crypto/experimental";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useContractEvent, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
 import Button from "../ui/Button";
@@ -10,13 +10,13 @@ import { formatEther, parseEther } from "viem";
 import Link from "next/link";
 
 export default function ValidationClient(
-  { abi, builtQuery, payment, operatorId, quorumNumber, slot }: {
+  { abi, builtQuery, payment, operatorId, quorumNumber, operatorIdToStakeHistorySlot }: {
     abi: any[],
     builtQuery: BuiltQueryV2,
     payment: string,
     operatorId: string,
     quorumNumber: number,
-    slot: string
+    operatorIdToStakeHistorySlot: number
   }
 ) {
   const { address } = useAccount();
@@ -40,7 +40,7 @@ export default function ValidationClient(
     address: Constants.VALIDATION_CONTRACT as `0x${string}`,
     abi: abi,
     functionName: 'processSlashing',
-    args: [operatorId, quorumNumber, slot, claimParams],
+    args: [bytes32(operatorId), quorumNumber, bytes32(operatorIdToStakeHistorySlot), claimParams],
     value: BigInt(payment),
   });
   const { data, isLoading, isSuccess, write } = useContractWrite(config);
