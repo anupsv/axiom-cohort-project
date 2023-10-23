@@ -27,7 +27,7 @@ export default async function Validate() {
           payment={payment}
           operatorId="0xe605a4951e1bf738ac88fea0c37c9c5a5652d2def52177c2f01295ebacdcccc1"
           quorumNumber={0}
-          slot="0xcbcc1482677ec2e1d747a7f7118c84e46887479eecf90bf7850b6ca501659ce6"
+          operatorIdToStakeHistorySlot={435}
         />
       </div>
     </>
