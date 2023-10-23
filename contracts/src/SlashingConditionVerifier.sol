@@ -10,7 +10,7 @@ import { AxiomV2Decoder } from './libraries/AxiomV2Decoder.sol';
 
 contract SlashingConditionVerifier is AxiomV2Client {
 
-    event AxiomCallbackQuerySchemaUpdated(bytes32 axiomCallbackQuerySchema);
+    event AxiomCallbackSuccess(uint32 updateBlockNumber, uint32 nextUpdateBlockNumber, uint96 stake);
     event AxiomCallbackCallerAddrUpdated(address axiomCallbackCallerAddr);
 
     uint64 public callbackSourceChainId;
@@ -49,7 +49,7 @@ contract SlashingConditionVerifier is AxiomV2Client {
         bytes32 rawStorageSlot = keccak256(abi.encodePacked(quorumNumSlot));
         require(rawStorageSlot == convertBytesToBytes32(axiomData.callback.extraData), "Storage slot used in callback was incorrect");
 
-//        _validateDataQuery(axiomData.dataQuery);
+        _validateDataQuery(axiomData.dataQuery);
         uint256 queryId = IAxiomV2Query(axiomV2QueryAddress).sendQuery{ value: msg.value }(
             axiomData.sourceChainId,
             axiomData.dataQueryHash,
@@ -78,12 +78,13 @@ contract SlashingConditionVerifier is AxiomV2Client {
         bytes32 slotData = axiomResults[0];
 
         // unpack the data according to the OperatorStake struct format
-        uint32 updateBlockNumber = uint32(uint256(slotData) >> (256 - 32));
-        uint32 nextUpdateBlockNumber = uint32(uint256(slotData) >> (256 - 32 - 32));
-        uint96 stake = uint96(uint256(slotData));
+        uint32 updateBlockNumber = uint32(uint256(data));
+        uint32 nextUpdateBlockNumber = uint32(uint256(data) >> 32);
+        uint96 stake = uint96(uint256(data) >> 64);
 
         // Do stuff with the stake value
 
+        emit AxiomCallbackSuccess(updateBlockNumber, nextUpdateBlockNumber, stake);
     }
 
     function _validateDataQuery(bytes calldata dataQuery) internal view {
